@@ -103,57 +103,57 @@ module.exports = (app) => {
   });
 
   // 按时间段，统计各街道的检测率
-  routerHome.get("/testedpercent", async (req, res) => {
-    const sqlStr = `call testedpercent_procedure('${req.query.start}', '${req.query.end}');`;
-    db.query(sqlStr, (err, results) => {
-      if (err) return res.status(422).send({ message: err.message });
-      let streetList = [];
-      let testedNum = [];
-      let untestNum = [];
-      let percentage = [];
-      const result = results[0];
-      result.forEach((element) => {
-        streetList.push(element.streetname);
-        testedNum.push(element.tested_num);
-        untestNum.push(element.total - element.tested_num);
-        percentage.push((element.tested_num / element.total).toFixed(4) * 100);
-      });
-      res.status(200).send({
-        status: 200,
-        data: {
-          streetList,
-          testedNum,
-          untestNum,
-          percentage,
-        },
-      });
-    });
-  });
+  // routerHome.get("/testedpercent", async (req, res) => {
+  //   const sqlStr = `call testedpercent_procedure('${req.query.start}', '${req.query.end}');`;
+  //   db.query(sqlStr, (err, results) => {
+  //     if (err) return res.status(422).send({ message: err.message });
+  //     let streetList = [];
+  //     let testedNum = [];
+  //     let untestNum = [];
+  //     let percentage = [];
+  //     const result = results[0];
+  //     result.forEach((element) => {
+  //       streetList.push(element.streetname);
+  //       testedNum.push(element.tested_num);
+  //       untestNum.push(element.total - element.tested_num);
+  //       percentage.push((element.tested_num / element.total).toFixed(4) * 100);
+  //     });
+  //     res.status(200).send({
+  //       status: 200,
+  //       data: {
+  //         streetList,
+  //         testedNum,
+  //         untestNum,
+  //         percentage,
+  //       },
+  //     });
+  //   });
+  // });
 
   // 按时间段，统计各街道的阳性、阴性人数
-  routerHome.get("/countbyres", async (req, res) => {
-    const sqlStr = `call countbyres_procedure('${req.query.start}', '${req.query.end}');`;
-    db.query(sqlStr, (err, results) => {
-      if (err) return res.status(422).send({ message: err.message });
-      let streetList = [];
-      let negative = []; // 阴性
-      let positive = []; // 阳性
-      const result = results[0];
-      result.forEach((element) => {
-        streetList.push(element.streetname);
-        negative.push(element.negative);
-        positive.push(element.positive);
-      });
-      res.status(200).send({
-        status: 200,
-        data: {
-          streetList,
-          negative,
-          positive,
-        },
-      });
-    });
-  });
+  // routerHome.get("/countbyres", async (req, res) => {
+  //   const sqlStr = `call countbyres_procedure('${req.query.start}', '${req.query.end}');`;
+  //   db.query(sqlStr, (err, results) => {
+  //     if (err) return res.status(422).send({ message: err.message });
+  //     let streetList = [];
+  //     let negative = []; // 阴性
+  //     let positive = []; // 阳性
+  //     const result = results[0];
+  //     result.forEach((element) => {
+  //       streetList.push(element.streetname);
+  //       negative.push(element.negative);
+  //       positive.push(element.positive);
+  //     });
+  //     res.status(200).send({
+  //       status: 200,
+  //       data: {
+  //         streetList,
+  //         negative,
+  //         positive,
+  //       },
+  //     });
+  //   });
+  // });
   app.use("/admin/api", routerHome);
 
   // 登录注册接口，挂载在app上
