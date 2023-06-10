@@ -17,84 +17,87 @@ module.exports = (app) => {
   } = require("../../schema/user");
 
   // 编写通用CRUD接口，挂在router上
+  // Disable universal CRUD as there is no id for table.
 
+  // ? 
   // 增加
-  router.post("/", async (req, res) => {
-    console.log(req.body);
-    const sqlStr = `insert into ${req.params.resource} set ?;`;
-    db.query(sqlStr, req.body, (err, results) => {
-      if (err)
-        return res.status(401).send({ status: 422, message: err.message });
+  // router.post("/", async (req, res) => {
+  //   console.log(req.body);
+  //   const sqlStr = `insert into ${req.params.resource} set ?;`;
+  //   db.query(sqlStr, req.body, (err, results) => {
+  //     if (err)
+  //       return res.status(401).send({ status: 422, message: err.message });
 
-      if (results.affectedRows !== 1)
-        return res.status(422).send({ message: "failed" });
-      res.status(200).send({
-        status: 200,
-        message: "success",
-      });
-    });
-  });
+  //     if (results.affectedRows !== 1)
+  //       return res.status(422).send({ message: "failed" });
+  //     res.status(200).send({
+  //       status: 200,
+  //       message: "success",
+  //     });
+  //   });
+  // });
 
-  // 删除
-  router.delete("/:id", async (req, res) => {
-    const sqlStr = `delete from ${req.params.resource}  where ${req.params.resource}_id =?;`;
-    db.query(sqlStr, [req.params.id], (err, results) => {
-      if (err) return res.status(422).send({ message: err.message });
+  // // 删除
+  // router.delete("/:id", async (req, res) => {
+  //   const sqlStr = `delete from ${req.params.resource}  where ${req.params.resource}_id =?;`;
+  //   db.query(sqlStr, [req.params.id], (err, results) => {
+  //     if (err) return res.status(422).send({ message: err.message });
 
-      if (results.affectedRows !== 1)
-        return res.status(422).send({ message: "failed" });
+  //     if (results.affectedRows !== 1)
+  //       return res.status(422).send({ message: "failed" });
 
-      res.status(200).send({
-        status: 200,
-        message: "success",
-      });
-    });
-  });
+  //     res.status(200).send({
+  //       status: 200,
+  //       message: "success",
+  //     });
+  //   });
+  // });
 
-  // 修改
-  router.post("/:id", async (req, res) => {
-    console.log("update");
-    let updateKey = Object.keys(req.body).join("=?,");
-    let updateVal = Object.values(req.body);
-    const sqlStr = `update ${req.params.resource} set ${updateKey} =? where ${req.params.resource}_id =?;`;
-    console.log(req.params.id);
-    db.query(sqlStr, [...updateVal, req.params.id], (err, results) => {
-      if (err) return res.status(422).send({ message: err.message });
-      if (results.affectedRows !== 1)
-        return res.status(401).send({ status: 401, message: "failed" });
-      res.send({
-        status: 200,
-        message: "success",
-      });
-    });
-  });
+  // // 修改
+  // router.post("/:id", async (req, res) => {
+  //   console.log("update");
+  //   let updateKey = Object.keys(req.body).join("=?,");
+  //   let updateVal = Object.values(req.body);
+  //   const sqlStr = `update ${req.params.resource} set ${updateKey} =? where ${req.params.resource}_id =?;`;
+  //   console.log(req.params.id);
+  //   db.query(sqlStr, [...updateVal, req.params.id], (err, results) => {
+  //     if (err) return res.status(422).send({ message: err.message });
+  //     if (results.affectedRows !== 1)
+  //       return res.status(401).send({ status: 401, message: "failed" });
+  //     res.send({
+  //       status: 200,
+  //       message: "success",
+  //     });
+  //   });
+  // });
 
-  // 查询多条或全部
-  router.get("/", async (req, res) => {
-    const sqlStr = `select * from ${req.params.resource}_view;`;
-    db.query(sqlStr, req.params.id, (err, results) => {
-      if (err) return res.status(422).send({ message: err.message });
-      // console.log(results)
-      res.status(200).send({
-        status: 200,
-        data: results,
-      });
-    });
-  });
-  // 查询一条
-  router.get("/:id", async (req, res) => {
-    const sqlStr = `select * from ${req.params.resource}_view where ${req.params.resource}_id =?;`;
-    console.log("findone");
-    console.log(sqlStr);
-    db.query(sqlStr, req.params.id, (err, results) => {
-      if (err) return res.status(422).send({ message: err.message });
+  // // 查询多条或全部
+  // router.get("/", async (req, res) => {
+  //   const sqlStr = `select * from ${req.params.resource}_view;`;
+  //   db.query(sqlStr, req.params.id, (err, results) => {
+  //     if (err) return res.status(422).send({ message: err.message });
+  //     // console.log(results)
+  //     res.status(200).send({
+  //       status: 200,
+  //       data: results,
+  //     });
+  //   });
+  // });
 
-      res.status(200).send({
-        status: 200,
-        data: results[0],
-      });
-    });
-  });
+  // // 查询一条
+  // router.get("/:id", async (req, res) => {
+  //   const sqlStr = `select * from ${req.params.resource}_view where ${req.params.resource}_id =?;`;
+  //   console.log("findone");
+  //   console.log(sqlStr);
+  //   db.query(sqlStr, req.params.id, (err, results) => {
+  //     if (err) return res.status(422).send({ message: err.message });
+
+  //     res.status(200).send({
+  //       status: 200,
+  //       data: results[0],
+  //     });
+  //   });
+  // });
 
   app.use("/admin/api/rest/:resource", router);
 
