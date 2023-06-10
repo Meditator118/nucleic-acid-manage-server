@@ -6,7 +6,7 @@ CREATE TABLE administrator (
 );
 
 -- Create nucleic_info_view table
-CREATE TABLE nucleic_info_view (
+CREATE TABLE nucleic_info (
   identification VARCHAR(255),
   test_name VARCHAR(255),
   sex VARCHAR(255),
@@ -20,7 +20,7 @@ CREATE TABLE nucleic_info_view (
 );
 
 -- Create resident_view table
-CREATE TABLE resident_view (
+CREATE TABLE resident (
   identification VARCHAR(255),
   r_name VARCHAR(255),
   sex VARCHAR(255),
@@ -29,6 +29,16 @@ CREATE TABLE resident_view (
   streetname VARCHAR(255),
   PRIMARY KEY (identification)
 );
+
+-- Create nucleic_info_view
+CREATE VIEW nucleic_info_view AS
+SELECT identification, test_name, sex, age, test_time, test_result, sample_name, test_s_name, gap_duration
+FROM nucleic_info;
+
+-- Create resident_view view
+CREATE VIEW resident_view AS
+SELECT identification, r_name, sex, birthday, age, streetname
+FROM resident;
 
 -- Create sampling_institution table
 CREATE TABLE sampling_institution (
