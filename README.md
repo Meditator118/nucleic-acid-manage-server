@@ -18,9 +18,3 @@
   ```
   npm run serve
   ```
-
-  
-
-### 二、前端项目
-
-+ https://github.com/Mayonnaise-Sann/vue2-manage

@@ -106,57 +106,74 @@ module.exports = (app) => {
   });
 
   // 按时间段，统计各街道的检测率
-  // routerHome.get("/testedpercent", async (req, res) => {
-  //   const sqlStr = `call testedpercent_procedure('${req.query.start}', '${req.query.end}');`;
-  //   db.query(sqlStr, (err, results) => {
-  //     if (err) return res.status(422).send({ message: err.message });
-  //     let streetList = [];
-  //     let testedNum = [];
-  //     let untestNum = [];
-  //     let percentage = [];
-  //     const result = results[0];
-  //     result.forEach((element) => {
-  //       streetList.push(element.streetname);
-  //       testedNum.push(element.tested_num);
-  //       untestNum.push(element.total - element.tested_num);
-  //       percentage.push((element.tested_num / element.total).toFixed(4) * 100);
-  //     });
-  //     res.status(200).send({
-  //       status: 200,
-  //       data: {
-  //         streetList,
-  //         testedNum,
-  //         untestNum,
-  //         percentage,
-  //       },
-  //     });
-  //   });
-  // });
+  routerHome.get("/testedpercent", async (req, res) => {
+    const sqlStr = `SELECT d.streetname,
+    COUNT(DISTINCT test_name) AS tested_count,
+    c.permanent_r_num AS total_count
+    FROM nucleic_info n
+    JOIN resident d ON n.test_name = d.r_name
+    JOIN street c ON d.streetname = c.streetname
+    WHERE n.test_time >= '${req.query.start.split(' ')[0]}' AND n.test_time <= '${req.query.end.split(' ')[0]}'
+    GROUP BY d.streetname;`;
+    db.query(sqlStr, (err, results) => {
+      if (err) return res.status(422).send({ message: err.message });
+      let streetList = [];
+      let testedNum = [];
+      let untestNum = [];
+      let percentage = [];
+      const result = results[0];
+      Array.from(results).forEach((element) => {
+        streetList.push(element.streetname);
+        testedNum.push(element.tested_count);
+        untestNum.push(element.total_count - element.tested_count);
+        percentage.push((element.tested_count / element.total_count).toFixed(4) * 100);
+      });
+      res.status(200).send({
+        status: 200,
+        data: {
+          streetList,
+          testedNum,
+          untestNum,
+          percentage,
+        },
+      });
+    });
+  });
 
   // 按时间段，统计各街道的阳性、阴性人数
-  // routerHome.get("/countbyres", async (req, res) => {
-  //   const sqlStr = `call countbyres_procedure('${req.query.start}', '${req.query.end}');`;
-  //   db.query(sqlStr, (err, results) => {
-  //     if (err) return res.status(422).send({ message: err.message });
-  //     let streetList = [];
-  //     let negative = []; // 阴性
-  //     let positive = []; // 阳性
-  //     const result = results[0];
-  //     result.forEach((element) => {
-  //       streetList.push(element.streetname);
-  //       negative.push(element.negative);
-  //       positive.push(element.positive);
-  //     });
-  //     res.status(200).send({
-  //       status: 200,
-  //       data: {
-  //         streetList,
-  //         negative,
-  //         positive,
-  //       },
-  //     });
-  //   });
-  // });
+  routerHome.get("/countbyres", async (req, res) => {
+    console.log(req.query.start);
+    const sqlStr = `SELECT r.streetname,
+    SUM(CASE WHEN n.test_result = '阴性' THEN 1 ELSE 0 END) AS negative_count,
+    SUM(CASE WHEN n.test_result = '阳性' THEN 1 ELSE 0 END) AS positive_count
+    FROM nucleic_info n
+    JOIN resident r ON n.test_name = r.r_name
+    WHERE test_time >= '${req.query.start.split(' ')[0]}' AND test_time <= '${req.query.end.split(' ')[0]}'
+    GROUP BY r.streetname`;
+    console.log(req.query.start.split(' ')[0]);
+    db.query(sqlStr, (err, results) => {
+      if (err) return res.status(422).send({ message: err.message });
+      let streetList = [];
+      let negative = []; // 阴性
+      let positive = []; // 阳性
+      console.log(results);
+
+      const result = results[0];
+      Array.from(results).forEach((element) => {
+        streetList.push(element.streetname);
+        negative.push(element.negative_count);
+        positive.push(element.positive_count);
+      });
+      res.status(200).send({
+        status: 200,
+        data: {
+          streetList,
+          negative,
+          positive,
+        },
+      });
+    });
+  });
   app.use("/admin/api", routerHome);
 
   // 登录注册接口，挂载在app上
