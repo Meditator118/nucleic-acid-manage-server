@@ -72,17 +72,17 @@ module.exports = (app) => {
   // });
 
   // // 查询多条或全部
-  // router.get("/", async (req, res) => {
-  //   const sqlStr = `select * from ${req.params.resource}_view;`;
-  //   db.query(sqlStr, req.params.id, (err, results) => {
-  //     if (err) return res.status(422).send({ message: err.message });
-  //     // console.log(results)
-  //     res.status(200).send({
-  //       status: 200,
-  //       data: results,
-  //     });
-  //   });
-  // });
+  router.get("/", async (req, res) => {
+    const sqlStr = `select * from ${req.params.resource};`;
+    db.query(sqlStr, req.params.id, (err, results) => {
+      if (err) return res.status(422).send({ message: err.message });
+      // console.log(results)
+      res.status(200).send({
+        status: 200,
+        data: results,
+      });
+    });
+  });
 
   // // 查询一条
   // router.get("/:id", async (req, res) => {

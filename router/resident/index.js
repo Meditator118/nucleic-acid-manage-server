@@ -21,7 +21,7 @@ module.exports = app => {
     })  
     // 查询一条
     router.get('/:id',async (req, res) => {
-        const sqlStr = `select * from resident_view where identification =?;`
+        const sqlStr = `select * from resident where identification =?;`
         db.query(sqlStr, req.params.id, (err, results) => {
             if (err) return res.status(401).send({ message: err.message })
             if(!results[0]) return res.status(401).send({ status: 401,message: '查询不到此人' }) 

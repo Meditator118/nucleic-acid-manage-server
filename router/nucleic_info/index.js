@@ -11,7 +11,7 @@ module.exports = app => {
     
     // 查询一条
     router.get('/:id',async (req, res) => {
-        const sqlStr = `select * from nucleic_info_view where identification =?;`
+        const sqlStr = `select * from nucleic_info where identification =?;`
         db.query(sqlStr, req.params.id, (err, results) => {
             if (err) return res.status(401).send({message: err.message})
             res.status(200).send({
